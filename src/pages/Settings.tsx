@@ -6,12 +6,13 @@ import BottomNav from "@/components/BottomNav";
 
 export default function Settings() {
   const { isDark, toggleTheme } = useTheme();
-  const { habits } = useHabits();
+  const { habits, deleteHabit } = useHabits();
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (confirm("Are you sure you want to reset all habits? This cannot be undone.")) {
-      localStorage.removeItem("habit-data");
-      window.location.reload();
+      for (const h of habits) {
+        await deleteHabit(h.id);
+      }
     }
   };
 

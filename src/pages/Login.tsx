@@ -8,22 +8,18 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!email || !password) {
-      setError("Please fill in all fields");
-      return;
-    }
-    const success = login(email, password);
-    if (success) {
-      navigate("/");
-    } else {
-      setError("Invalid email or password");
-    }
+    if (!email || !password) { setError("Please fill in all fields"); return; }
+    setLoading(true);
+    const err = await login(email, password);
+    setLoading(false);
+    if (err) { setError(err); } else { navigate("/"); }
   };
 
   return (
@@ -38,32 +34,19 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full bg-secondary text-foreground rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-muted-foreground/30 transition-all placeholder:text-muted-foreground"
-          />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email"
+            className="w-full bg-secondary text-foreground rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-muted-foreground/30 transition-all placeholder:text-muted-foreground" />
           <PasswordInput value={password} onChange={setPassword} />
-
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
-
-          <button
-            type="submit"
-            className="w-full bg-foreground text-background font-semibold rounded-xl py-3.5 hover:opacity-90 active:scale-[0.98] transition-all"
-          >
-            Sign In
+          {error && <p className="text-destructive text-sm text-center">{error}</p>}
+          <button type="submit" disabled={loading}
+            className="w-full bg-foreground text-background font-semibold rounded-xl py-3.5 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50">
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
 
         <p className="text-center mt-8 text-muted-foreground">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-foreground font-semibold hover:underline">
-            Sign Up
-          </Link>
+          <Link to="/signup" className="text-foreground font-semibold hover:underline">Sign Up</Link>
         </p>
       </div>
     </div>

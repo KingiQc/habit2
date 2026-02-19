@@ -13,7 +13,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 export default function Profile() {
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
   const { habits } = useHabits();
   const [view, setView] = useState<"weekly" | "monthly">("weekly");
 
@@ -31,10 +31,7 @@ export default function Profile() {
         (sum, h) => sum + (h.completions.includes(dateStr) ? 1 : 0),
         0
       );
-      return {
-        label: d.toLocaleDateString("en", { weekday: "short" }),
-        completions: count,
-      };
+      return { label: d.toLocaleDateString("en", { weekday: "short" }), completions: count };
     });
   }, [habits]);
 
@@ -50,10 +47,7 @@ export default function Profile() {
         const ds = formatDate(d);
         count += habits.reduce((s, h) => s + (h.completions.includes(ds) ? 1 : 0), 0);
       }
-      return {
-        label: `W${4 - i}`,
-        completions: count,
-      };
+      return { label: `W${4 - i}`, completions: count };
     }).reverse();
   }, [habits]);
 
@@ -74,7 +68,7 @@ export default function Profile() {
               <Icon icon="mdi:account" width={32} className="text-foreground" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-foreground">{user?.name || "User"}</h2>
+              <h2 className="text-xl font-bold text-foreground">{profile?.name || "User"}</h2>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
           </div>
@@ -104,9 +98,7 @@ export default function Profile() {
                   key={v}
                   onClick={() => setView(v)}
                   className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
-                    view === v
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground"
+                    view === v ? "bg-primary text-primary-foreground" : "text-muted-foreground"
                   }`}
                 >
                   {v === "weekly" ? "7 Days" : "4 Weeks"}
