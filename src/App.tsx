@@ -17,13 +17,15 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) return <div className="min-h-screen bg-background" />;
   if (!user) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
 
 function AuthRoute({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) return <div className="min-h-screen bg-background" />;
   if (user) return <Navigate to="/" replace />;
   return <>{children}</>;
 }
